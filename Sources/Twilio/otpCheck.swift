@@ -16,7 +16,7 @@ extension Twilio {
             throw TwilioError.twilioServerError
         }
         guard isValid.valid else {
-            throw TwilioError.wrongOtp
+            return false
         }
         return true
     }
