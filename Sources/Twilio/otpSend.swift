@@ -8,25 +8,25 @@
 import Vapor
 
 extension Twilio {
-    public func otpSend(smsTo number: String) async throws -> HTTPResponseStatus {
+    public func otpSend(smsTo number: String) async throws -> Bool {
         let didSend = try await self.application.client.post(self.verifyUrl, headers: self.headers) { req in
             let formData = TwilioVerify.Request(sms: number)
             try req.content.encode(formData, as: .urlEncodedForm)
         }
         guard didSend.status == .created else {
-            throw Abort(.badGateway) // SMS Server Error
+            throw TwilioError.twilioServerError
         }
-        return didSend.status
+        return true
     }
     
-    public func otpSend(emailTo email: String) async throws -> HTTPResponseStatus {
+    public func otpSend(emailTo email: String) async throws -> Bool {
         let didSend = try await self.application.client.post(self.verifyUrl, headers: self.headers) { req in
             let formData = TwilioVerify.Request(email: email)
             try req.content.encode(formData, as: .urlEncodedForm)
         }
         guard didSend.status == .created else {
-            throw Abort(.badGateway) // Email Server Error
+            throw TwilioError.twilioServerError
         }
-        return didSend.status
+        return true
     }
 }
